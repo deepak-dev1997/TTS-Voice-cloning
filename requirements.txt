@@ -1,0 +1,4 @@
+flask
+chatterbox-streaming
+torch
+numpy scipy
