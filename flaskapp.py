@@ -19,7 +19,10 @@ def get_model():
     global MODEL
     if MODEL is None:
         MODEL = ChatterboxTTS.from_pretrained(DEVICE)
+        import copy
+        MODEL.default_conds = copy.deepcopy(MODEL.conds)
     return MODEL
+
 
 def synth(params, wav_path=None):
     """Generate audio, return (sr, np.array)."""
@@ -27,9 +30,15 @@ def synth(params, wav_path=None):
     if params["seed"] != 0:
         set_seed(int(params["seed"]))
 
+    if wav_path:                       # clone to new voice
+        audio_prompt = wav_path
+    else:                              # fall back to default voice
+        model.conds = model.default_conds
+        audio_prompt = None            # <- tell generate() not to clone
+
     sr, audio = model.sr, model.generate(
         params["text"],
-        audio_prompt_path=wav_path,
+        audio_prompt_path=audio_prompt,
         exaggeration=params["exaggeration"],
         temperature=params["temperature"],
         cfg_weight=params["cfgw"],
