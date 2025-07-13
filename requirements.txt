@@ -1,4 +1,6 @@
 flask
 chatterbox-streaming
 torch
-numpy scipy
+numpy 
+scipy
+PyPDF2
